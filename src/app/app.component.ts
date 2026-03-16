@@ -19,5 +19,5 @@ import Swal from 'sweetalert2';
   `]
 })
 export class AppComponent {
-  title = 'Burtsa';
+  title ='Nasdaq & SP 500';
 }

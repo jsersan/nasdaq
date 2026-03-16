@@ -1,10 +1,19 @@
 export const environment = {
   production: false,
   
+  firebase: {
+    apiKey: "AIzaSyDXkfZdslH0EuCaAEIwRGzSc9JM-HAwLcU",
+    authDomain: "burtsa.firebaseapp.com",
+    projectId: "burtsa",
+    storageBucket: "burtsa.firebasestorage.app",
+    messagingSenderId: "730639825299",
+    appId: "1:730639825299:web:8e8ee6e2dcb91a2c7c9a38"
+  },
+  
   // ✅ Alpha Vantage configuración
   alphaVantage: {
     enabled: true,
-    apiKey: 'R5KI16GRPSP5PKHZ', // ⚠️ Reemplaza con tu API key real
+    apiKey: 'R5KI16GRPSP5PKHZ',
     backendUrl: 'http://localhost:3000/api/alpha-vantage'
   },
   
@@ -18,12 +27,5 @@ export const environment = {
   useMockData: false, // Cambiar a true si Alpha Vantage falla
   
   // API activa
-  activeAPI: 'alphaVantage'
+  activeAPI: 'alphaVantage' as 'alphaVantage' | 'yahooFinance'
 };
-
-
-
-
-
-
-

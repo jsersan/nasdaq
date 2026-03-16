@@ -459,10 +459,10 @@ export class PortfolioComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Navegar al mercado
+   * Navegar al mercado (S&P 500 por defecto)
    */
   goToMarket() {
-    this.router.navigate(['/ibex35']);
+    this.router.navigate(['/sp500']);
   }
 
   /**

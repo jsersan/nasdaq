@@ -51,7 +51,21 @@ export class AuthComponent {
 
     try {
       await this.authService.login(this.email, this.password);
-      this.router.navigate(['/portfolio']);
+      
+      // ✅ CAMBIO: Verificar si hay una URL guardada para redirección
+      const redirectUrl = localStorage.getItem('redirectUrl');
+      
+      if (redirectUrl) {
+        // Si venías de alguna página protegida, volver allí
+        localStorage.removeItem('redirectUrl');
+        console.log('✅ Redirigiendo a:', redirectUrl);
+        this.router.navigate([redirectUrl]);
+      } else {
+        // Si no, ir al portfolio por defecto
+        console.log('✅ Redirigiendo a: /portfolio');
+        this.router.navigate(['/portfolio']);
+      }
+      
     } catch (error: any) {
       this.errorMessage = error.message;
     } finally {
@@ -84,7 +98,11 @@ export class AuthComponent {
 
     try {
       await this.authService.register(this.email, this.password, this.displayName);
+      
+      // ✅ Después del registro, ir al portfolio
+      console.log('✅ Registro exitoso. Redirigiendo a: /portfolio');
       this.router.navigate(['/portfolio']);
+      
     } catch (error: any) {
       this.errorMessage = error.message;
     } finally {

@@ -13,7 +13,7 @@ import Swal from 'sweetalert2';
   styleUrls: ['./market-view.component.scss']
 })
 export class MarketViewComponent implements OnInit, OnDestroy {
-  marketType: 'ibex35' | 'continuo' = 'ibex35';
+  marketType: 'sp500' | 'nasdaq' = 'sp500';
   indexData: IndexData | null = null;
   stocks: StockData[] = [];
   topGainers: StockData[] = [];
@@ -55,19 +55,19 @@ export class MarketViewComponent implements OnInit, OnDestroy {
   loadMarketData() {
     this.loading = true;
 
-    if (this.marketType === 'ibex35') {
-      this.marketDataService.getIBEX35Data()
+    if (this.marketType === 'sp500') {
+      this.marketDataService.getSP500Data()
         .pipe(takeUntil(this.destroy$))
         .subscribe(data => {
           this.indexData = data;
           this.updateLastUpdateTime();
         });
 
-      this.marketDataService.getIBEX35Stocks()
+      this.marketDataService.getSP500Stocks()
         .pipe(takeUntil(this.destroy$))
         .subscribe(stocks => {
-          // Ordenar alfabéticamente por nombre por defecto
-          this.stocks = stocks.sort((a, b) => a.name.localeCompare(b.name));
+          // Ordenar alfabéticamente por símbolo por defecto
+          this.stocks = stocks.sort((a, b) => a.symbol.localeCompare(b.symbol));
           this.calculateTopMovers();
           this.loading = false;
           this.updateLastUpdateTime();
@@ -78,11 +78,18 @@ export class MarketViewComponent implements OnInit, OnDestroy {
           }
         });
     } else {
-      this.marketDataService.getMercadoContinuoStocks()
+      this.marketDataService.getNASDAQData()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(data => {
+          this.indexData = data;
+          this.updateLastUpdateTime();
+        });
+
+      this.marketDataService.getNASDAQStocks()
         .pipe(takeUntil(this.destroy$))
         .subscribe(stocks => {
-          // Ordenar alfabéticamente por nombre por defecto
-          this.stocks = stocks.sort((a, b) => a.name.localeCompare(b.name));
+          // Ordenar alfabéticamente por símbolo por defecto
+          this.stocks = stocks.sort((a, b) => a.symbol.localeCompare(b.symbol));
           this.calculateTopMovers();
           this.loading = false;
           this.updateLastUpdateTime();
@@ -137,8 +144,8 @@ export class MarketViewComponent implements OnInit, OnDestroy {
       let aVal = a[this.sortColumn];
       let bVal = b[this.sortColumn];
       
-      // Manejo especial para strings (nombre)
-      if (this.sortColumn === 'name') {
+      // Manejo especial para strings (símbolo y nombre)
+      if (this.sortColumn === 'symbol' || this.sortColumn === 'name') {
         const comparison = aVal.localeCompare(bVal);
         return this.sortDirection === 'desc' ? -comparison : comparison;
       }
@@ -149,7 +156,7 @@ export class MarketViewComponent implements OnInit, OnDestroy {
         return this.sortDirection === 'desc' ? -comparison : comparison;
       }
       
-      // Manejo especial para volumen (puede tener K, M)
+      // Manejo especial para volumen (puede tener K, M, B)
       if (this.sortColumn === 'volume') {
         aVal = this.parseVolume(aVal);
         bVal = this.parseVolume(bVal);
@@ -165,14 +172,16 @@ export class MarketViewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Convertir volumen (con K, M) a número
+   * Convertir volumen (con K, M, B) a número
    */
   private parseVolume(volume: string): number {
     if (typeof volume === 'number') return volume;
     
     const str = volume.toString().toUpperCase();
     
-    if (str.includes('M')) {
+    if (str.includes('B')) {
+      return parseFloat(str.replace('B', '')) * 1000000000;
+    } else if (str.includes('M')) {
       return parseFloat(str.replace('M', '')) * 1000000;
     } else if (str.includes('K')) {
       return parseFloat(str.replace('K', '')) * 1000;
@@ -197,39 +206,33 @@ export class MarketViewComponent implements OnInit, OnDestroy {
   }
 
   navigateToMarket(market: string) {
-    if (market === 'ibex35') {
-      this.router.navigate(['/ibex35']);
+    if (market === 'sp500') {
+      this.router.navigate(['/sp500']);
     } else {
-      this.router.navigate(['/mercado-continuo']);
+      this.router.navigate(['/nasdaq']);
     }
   }
 
   navigateToStock(symbol: string) {
     this.router.navigate(['/stock', symbol]);
   }
-
+  
   navigateToPortfolio() {
     this.router.navigate(['/portfolio']);
   }
 
   navigateToEuribor() {
-    this.router.navigate(['/euribor']);
+    // Puedes cambiar esto por algún índice relevante de US, como Treasury Rates
+    this.router.navigate(['/treasury-rates']);
   }
 
   /**
-   * Formatear número con separador de miles
+   * Formatear número con separador de miles español
    */
   formatNumber(num: number, decimals: number = 2): string {
-    // Convertir a número con decimales fijos
     const fixed = num.toFixed(decimals);
-    
-    // Separar parte entera y decimal
     const [integer, decimal] = fixed.split('.');
-    
-    // Añadir separador de miles (punto) a la parte entera
     const withThousands = integer.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    
-    // Unir con coma decimal
     return decimal ? `${withThousands},${decimal}` : withThousands;
   }
 

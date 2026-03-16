@@ -8,45 +8,58 @@ import { CashManagementComponent } from './components/cash-managment/cash-managm
 import { EuriborComponent } from './components/euribor/euribor.component';
 
 export const routes: Routes = [
+  // ✅ Ruta por defecto - IR AL MERCADO (no al login)
   {
     path: '',
-    redirectTo: '/login',
+    redirectTo: '/sp500',
     pathMatch: 'full'
+  },
+  
+  // ✅ Rutas PÚBLICAS del mercado (sin authGuard)
+  {
+    path: 'sp500',
+    component: MarketViewComponent,
+    data: { market: 'sp500' }
+  },
+  {
+    path: 'nasdaq',
+    component: MarketViewComponent,
+    data: { market: 'nasdaq' }
+  },
+  {
+    path: 'stock/:symbol',
+    component: StockDetailComponent
+  },
+  
+  // ✅ Rutas PROTEGIDAS (con authGuard)
+  {
+    path: 'portfolio',
+    component: PortfolioComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'cash-management',
     component: CashManagementComponent,
-    canActivate: [authGuard]  // ← Ruta protegida
+    canActivate: [authGuard]
+  },
+  
+  // ✅ Otras rutas públicas
+  {
+    path: 'login',
+    component: AuthComponent
   },
   {
     path: 'euribor',
     component: EuriborComponent
   },
   {
-    path: 'login',
-    component: AuthComponent
+    path: 'treasury-rates',
+    component: EuriborComponent  // Reutilizar el mismo componente o crear uno nuevo
   },
-  {
-    path: 'portfolio',
-    component: PortfolioComponent,
-    canActivate: [authGuard]  // ← Ruta protegida
-  },
-  {
-    path: 'ibex35',
-    component: MarketViewComponent,
-    data: { market: 'ibex35' }
-  },
-  {
-    path: 'mercado-continuo',
-    component: MarketViewComponent,
-    data: { market: 'continuo' }
-  },
-  {
-    path: 'stock/:symbol',
-    component: StockDetailComponent
-  },
+  
+  // ✅ Ruta 404 - IR AL MERCADO (no al login)
   {
     path: '**',
-    redirectTo: '/login'
+    redirectTo: '/sp500'
   }
 ];

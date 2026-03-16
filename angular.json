@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "burtsa-app": {
+    "nasdaq-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,10 +17,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/burtsa-app",
+            "outputPath": "dist/nasdaq-app",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "baseHref": "/angular/burtsa/",
+            "baseHref": "/angular/nasdaq/",
             "fileReplacements": [
               {
                 "replace": "src/environments/environment.ts",
@@ -86,10 +86,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "burtsa-app:build:production"
+              "buildTarget": "nasdaq-app:build:production"
             },
             "development": {
-              "buildTarget": "burtsa-app:build:development"
+              "buildTarget": "nasdaq-app:build:development"
             }
           },
           "defaultConfiguration": "development"
