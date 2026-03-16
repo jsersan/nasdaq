@@ -1,0 +1,133 @@
+<div class="cash-management-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-content">
+        <button class="back-button" (click)="goToPortfolio()">
+          ← Volver a Cartera
+        </button>
+        <h1 class="logo">Gestión de Efectivo</h1>
+      </div>
+    </header>
+  
+    <!-- Cash Balance -->
+    <div class="balance-section">
+      <div class="balance-card">
+        <div class="balance-icon">💰</div>
+        <div class="balance-content">
+          <span class="balance-label">Efectivo Disponible</span>
+          <span class="balance-value">{{ formatNumber(currentCash, 2) }}€</span>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Operation Form -->
+    <div class="operation-section">
+      <div class="operation-card">
+        <h2 class="section-title">Nueva Operación</h2>
+  
+        <!-- Operation Type -->
+        <div class="operation-type">
+          <button 
+            class="type-button"
+            [class.active]="operationType === 'deposit'"
+            (click)="operationType = 'deposit'">
+            📥 INGRESAR
+          </button>
+          <button 
+            class="type-button"
+            [class.active]="operationType === 'withdrawal'"
+            (click)="operationType = 'withdrawal'">
+            📤 RETIRAR
+          </button>
+        </div>
+  
+        <!-- Amount Input -->
+        <div class="form-group">
+          <label>Importe (€)</label>
+          <input 
+            type="number" 
+            [(ngModel)]="amount"
+            placeholder="0,00"
+            min="0.01"
+            step="0.01"
+            class="amount-input"
+            [disabled]="loading">
+        </div>
+  
+        <!-- Notes Input -->
+        <div class="form-group">
+          <label>Notas (opcional)</label>
+          <input 
+            type="text" 
+            [(ngModel)]="notes"
+            placeholder="Ej: Ingreso inicial, Retirada de ganancias..."
+            class="notes-input"
+            [disabled]="loading">
+        </div>
+  
+        <!-- Submit Button -->
+        <button 
+          class="submit-button"
+          [class.deposit]="operationType === 'deposit'"
+          [class.withdrawal]="operationType === 'withdrawal'"
+          [disabled]="loading || !amount || amount <= 0"
+          (click)="executeOperation()">
+          <span *ngIf="!loading">
+            {{ operationType === 'deposit' ? '📥 INGRESAR FONDOS' : '📤 RETIRAR FONDOS' }}
+          </span>
+          <span *ngIf="loading" class="loading-spinner">⏳ Procesando...</span>
+        </button>
+  
+        <p class="info-text">
+          {{ operationType === 'deposit' 
+            ? 'ℹ️ Los fondos estarán disponibles inmediatamente para operar' 
+            : '⚠️ Asegúrate de tener suficiente efectivo disponible' }}
+        </p>
+      </div>
+    </div>
+  
+    <!-- Movements History -->
+    <div class="history-section" *ngIf="movements.length > 0">
+      <h2 class="section-title">Historial de Movimientos</h2>
+      
+      <div class="movements-list">
+        <div 
+          class="movement-item"
+          [ngClass]="getMovementClass(movement.type)"
+          *ngFor="let movement of movements">
+          
+          <div class="movement-icon">
+            {{ getMovementIcon(movement.type) }}
+          </div>
+  
+          <div class="movement-info">
+            <div class="movement-header">
+              <span class="movement-type">
+                {{ movement.type === 'deposit' ? 'INGRESO' : 'RETIRADA' }}
+              </span>
+            </div>
+            <div class="movement-notes" *ngIf="movement.notes">
+              {{ movement.notes }}
+            </div>
+            <div class="movement-date">
+              {{ formatDate(movement.timestamp) }}
+            </div>
+          </div>
+  
+          <div class="movement-amount">
+            <span [class.positive]="movement.type === 'deposit'" 
+                  [class.negative]="movement.type === 'withdrawal'">
+              {{ movement.type === 'deposit' ? '+' : '-' }}{{ formatNumber(movement.amount, 2) }}€
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="movements.length === 0">
+      <div class="empty-icon">📋</div>
+      <h3>Sin movimientos</h3>
+      <p>Aún no has realizado ningún ingreso o retirada de efectivo.</p>
+    </div>
+  </div>

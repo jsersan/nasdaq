@@ -1,0 +1,15 @@
+{
+    "/api/rapidapi": {
+      "target": "https://yahoo-finance15.p.rapidapi.com",
+      "secure": true,
+      "changeOrigin": true,
+      "pathRewrite": {
+        "^/api/rapidapi": ""
+      },
+      "headers": {
+        "X-RapidAPI-Key": "b5f042675cmsh67003905f12575cp1ebaecjsna372ad395838",
+        "X-RapidAPI-Host": "yahoo-finance15.p.rapidapi.com"
+      },
+      "logLevel": "debug"
+    }
+  }

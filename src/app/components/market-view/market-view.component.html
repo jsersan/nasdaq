@@ -1,0 +1,164 @@
+<div class="market-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <h1 class="logo">Burtsa</h1>
+      <nav class="navigation">
+        <button 
+          class="nav-button"
+          [class.active]="marketType === 'ibex35'"
+          (click)="navigateToMarket('ibex35')">
+          IBEX35
+        </button>
+        <button 
+          class="nav-button"
+          [class.active]="marketType === 'continuo'"
+          (click)="navigateToMarket('continuo')">
+          Mercado Continuo
+        </button>
+        <button 
+          class="nav-button euribor-nav"
+          (click)="navigateToEuribor()">
+          📊 Euribor
+        </button>
+        <button 
+          class="nav-button portfolio-nav"
+          (click)="navigateToPortfolio()">
+          💼 Mi Cartera
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Banner de hora de actualización - FUERA del header -->
+  <div class="update-time-container" *ngIf="lastUpdateTime && !loading">
+    <div class="update-time-banner">
+      <span class="update-icon">🕐</span>
+      <span class="update-text">Última actualización: <strong>{{ lastUpdateTime }}</strong></span>
+    </div>
+  </div>
+
+  <!-- Index Summary (solo para IBEX35) -->
+  <div class="index-summary" *ngIf="marketType === 'ibex35' && indexData">
+    <div class="index-card">
+      <div class="index-info">
+        <span class="index-name">{{ indexData.name }}</span>
+        <span class="index-status">CIERRE</span>
+      </div>
+      <div class="index-value">
+        <span class="value-number">{{ formatNumber(indexData.value, 2) }}</span>
+        <div class="change-badge" [ngClass]="getChangeClass(indexData.change)">
+          <span class="change-icon">{{ getChangeIcon(indexData.change) }}</span>
+          <span class="change-percent">{{ formatNumber(Math.abs(indexData.changePercent), 2) }}%</span>
+          <span class="change-label">Último</span>
+          <span class="change-value">{{ formatNumber(indexData.value, 2) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Movers -->
+  <div class="movers-section">
+    <div class="movers-card">
+      <h3 class="movers-title">Mejores</h3>
+      <div class="movers-list">
+        <div class="mover-item" *ngFor="let stock of topGainers">
+          <span class="mover-name" (click)="navigateToStock(stock.name)">{{ stock.name }}</span>
+          <span class="mover-change positive">{{ formatNumber(stock.changePercent, 2) }}%</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="movers-card">
+      <h3 class="movers-title">Peores</h3>
+      <div class="movers-list">
+        <div class="mover-item" *ngFor="let stock of topLosers">
+          <span class="mover-name" (click)="navigateToStock(stock.name)">{{ stock.name }}</span>
+          <span class="mover-change negative">{{ formatNumber(stock.changePercent, 2) }}%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stocks Table -->
+  <div class="table-container">
+    <div class="loading-overlay" *ngIf="loading">
+      <div class="spinner"></div>
+    </div>
+
+    <table class="stocks-table">
+      <thead>
+        <tr>
+          <th class="sortable" (click)="sortBy('name')" [class.sorted]="isSortedBy('name')">
+            Valor <span class="sort-icon">{{ getSortIcon('name') }}</span>
+          </th>
+          <th class="text-right sortable" (click)="sortBy('price')" [class.sorted]="isSortedBy('price')">
+            Último <span class="sort-icon">{{ getSortIcon('price') }}</span>
+          </th>
+          <th class="text-right sortable" (click)="sortBy('change')" [class.sorted]="isSortedBy('change')">
+            Var <span class="sort-icon">{{ getSortIcon('change') }}</span>
+          </th>
+          <th class="text-right sortable" (click)="sortBy('changePercent')" [class.sorted]="isSortedBy('changePercent')">
+            Var% <span class="sort-icon">{{ getSortIcon('changePercent') }}</span>
+          </th>
+          <th class="text-right sortable" (click)="sortBy('volume')" [class.sorted]="isSortedBy('volume')">
+            Vol <span class="sort-icon">{{ getSortIcon('volume') }}</span>
+          </th>
+          <th class="text-right sortable" (click)="sortBy('previousClose')" [class.sorted]="isSortedBy('previousClose')">
+            Anterior <span class="sort-icon">{{ getSortIcon('previousClose') }}</span>
+          </th>
+          <th class="text-right sortable" (click)="sortBy('dayHigh')" [class.sorted]="isSortedBy('dayHigh')">
+            Máximo <span class="sort-icon">{{ getSortIcon('dayHigh') }}</span>
+          </th>
+          <th class="text-right sortable" (click)="sortBy('dayLow')" [class.sorted]="isSortedBy('dayLow')">
+            Mínimo <span class="sort-icon">{{ getSortIcon('dayLow') }}</span>
+          </th>
+          <th class="text-right sortable" (click)="sortBy('time')" [class.sorted]="isSortedBy('time')">
+            Hora <span class="sort-icon">{{ getSortIcon('time') }}</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Fila del índice IBEX-35 -->
+        <tr *ngIf="marketType === 'ibex35' && indexData" class="index-row">
+          <td class="stock-name index-name">IBEX-35</td>
+          <td class="text-right">{{ formatNumber(indexData.value, 0) }}</td>
+          <td class="text-right" [ngClass]="getChangeClass(indexData.change)">
+            {{ formatNumber(indexData.change, 0) }}
+          </td>
+          <td class="text-right" [ngClass]="getChangeClass(indexData.changePercent)">
+            {{ formatNumber(indexData.changePercent, 2) }}
+          </td>
+          <td class="text-right">0</td>
+          <td class="text-right">{{ formatNumber(indexData.value - indexData.change, 0) }}</td>
+          <td class="text-right">{{ formatNumber(indexData.value * 1.003, 0) }}</td>
+          <td class="text-right">{{ formatNumber(indexData.value * 0.997, 0) }}</td>
+          <td class="text-right">CIERRE</td>
+        </tr>
+
+        <!-- Filas de acciones -->
+        <tr *ngFor="let stock of stocks" class="stock-row">
+          <td class="stock-name" (click)="navigateToStock(stock.name)">
+            {{ stock.name }}
+          </td>
+          <td class="text-right">{{ formatNumber(stock.price, 4) }}</td>
+          <td class="text-right" [ngClass]="getChangeClass(stock.change)">
+            {{ formatNumber(stock.change, 4) }}
+          </td>
+          <td class="text-right" [ngClass]="getChangeClass(stock.changePercent)">
+            {{ formatNumber(stock.changePercent, 2) }}
+          </td>
+          <td class="text-right">{{ stock.volume }}</td>
+          <td class="text-right">{{ formatNumber(stock.previousClose, 0) }}</td>
+          <td class="text-right">{{ formatNumber(stock.dayHigh, 0) }}</td>
+          <td class="text-right">{{ formatNumber(stock.dayLow, 0) }}</td>
+          <td class="text-right">{{ stock.time }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="no-data" *ngIf="!loading && stocks.length === 0">
+      No hay datos disponibles
+    </div>
+  </div>
+</div>

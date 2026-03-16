@@ -1,0 +1,247 @@
+<div class="stock-detail-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <button class="back-button" (click)="goBack()">
+        ← Volver
+      </button>
+      <h1 class="logo">Burtsa</h1>
+      <button class="portfolio-button" (click)="goToPortfolio()">
+        💼 Mi Cartera
+      </button>
+    </div>
+  </header>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Cargando información...</p>
+  </div>
+
+  <!-- Stock Detail -->
+  <div class="detail-content" *ngIf="!loading && stock">
+    <!-- Stock Header -->
+    <div class="stock-header">
+      <div class="stock-title">
+        <h1>{{ stock.name }}</h1>
+        <span class="stock-symbol">({{ stock.symbol }})</span>
+      </div>
+      <div class="stock-price">
+        <span class="price-value">{{ formatNumber(stock.price, 4) }}€</span>
+        <div class="price-change" [ngClass]="getChangeClass(stock.change)">
+          <span class="change-icon">{{ getChangeIcon(stock.change) }}</span>
+          <span class="change-value">{{ formatNumber(Math.abs(stock.change), 4) }}</span>
+          <span class="change-percent">({{ formatNumber(stock.changePercent, 2) }}%)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Position (if exists) -->
+    <div class="user-position" *ngIf="userPosition">
+      <div class="position-header">
+        <h3>📊 Tu Posición</h3>
+      </div>
+      <div class="position-details">
+        <div class="position-item">
+          <span class="position-label">Tienes:</span>
+          <span class="position-value">{{ userPosition.quantity }} acciones</span>
+        </div>
+        <div class="position-item">
+          <span class="position-label">Precio Medio:</span>
+          <span class="position-value">{{ formatNumber(userPosition.avgPrice, 4) }}€</span>
+        </div>
+        <div class="position-item">
+          <span class="position-label">Invertido:</span>
+          <span class="position-value">{{ formatNumber(userPosition.totalInvested, 2) }}€</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Data Table -->
+    <div class="market-data-section">
+      <h2 class="section-title">Información del Mercado</h2>
+      <table class="data-table">
+        <tbody>
+          <tr>
+            <td class="label">Var. Neta</td>
+            <td class="value" [ngClass]="getChangeClass(stock.change)">
+              {{ formatNumber(stock.change, 4) }}
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Var. %</td>
+            <td class="value" [ngClass]="getChangeClass(stock.changePercent)">
+              {{ formatNumber(stock.changePercent, 2) }}
+            </td>
+          </tr>
+          <tr>
+            <td class="label">Volumen</td>
+            <td class="value">{{ stock.volume }}</td>
+          </tr>
+          <tr>
+            <td class="label">Anterior</td>
+            <td class="value">{{ formatNumber(stock.previousClose, 4) }}</td>
+          </tr>
+          <tr>
+            <td class="label">Máximo</td>
+            <td class="value">{{ formatNumber(stock.dayHigh, 4) }}</td>
+          </tr>
+          <tr>
+            <td class="label">Mínimo</td>
+            <td class="value">{{ formatNumber(stock.dayLow, 4) }}</td>
+          </tr>
+          <tr>
+            <td class="label">Hora</td>
+            <td class="value">{{ stock.time }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Trading Simulator -->
+    <div class="trading-section">
+      <h2 class="section-title">Simulador de Operaciones</h2>
+      <div class="trading-card">
+        
+        <!-- Cash Display -->
+        <div class="cash-display">
+          <div class="cash-item">
+            <span class="cash-label">💰 Efectivo Disponible:</span>
+            <span class="cash-value">{{ formatNumber(availableCash, 2) }}€</span>
+          </div>
+        </div>
+
+        <!-- Operation Type -->
+        <div class="operation-type">
+          <button 
+            class="type-button"
+            [class.active]="operationType === 'buy'"
+            (click)="operationType = 'buy'; onOperationTypeChange()">
+            COMPRAR
+          </button>
+          <button 
+            class="type-button"
+            [class.active]="operationType === 'sell'"
+            (click)="operationType = 'sell'; onOperationTypeChange()">
+            VENDER
+          </button>
+        </div>
+
+        <!-- Quantity Input -->
+        <div class="form-group">
+          <label>Número de acciones</label>
+          <input 
+            type="number" 
+            [(ngModel)]="quantity"
+            (ngModelChange)="onQuantityChange()"
+            min="1"
+            step="1"
+            class="quantity-input">
+        </div>
+
+        <!-- Price Info -->
+        <div class="price-info">
+          <div class="info-row">
+            <span class="info-label">Precio unitario:</span>
+            <span class="info-value">{{ formatNumber(stock.price, 4) }}€</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Cantidad:</span>
+            <span class="info-value">{{ quantity }} acciones</span>
+          </div>
+          <div class="info-row total">
+            <span class="info-label">Total:</span>
+            <span class="info-value total-amount">{{ formatNumber(totalAmount, 2) }}€</span>
+          </div>
+          
+          <!-- Remaining Cash Display -->
+          <div class="info-row remaining-cash" 
+               [class.insufficient]="!hasEnoughCash()">
+            <span class="info-label">
+              {{ operationType === 'buy' ? 'Quedarán:' : 'Tendrás:' }}
+            </span>
+            <span class="info-value" 
+                  [class.negative]="!hasEnoughCash()"
+                  [class.positive]="hasEnoughCash()">
+              {{ formatNumber(remainingCash, 2) }}€
+            </span>
+          </div>
+          
+          <!-- Insufficient funds warning -->
+          <div class="insufficient-warning" *ngIf="operationType === 'buy' && !hasEnoughCash()">
+            ⚠️ Fondos insuficientes. Faltan {{ formatNumber(Math.abs(remainingCash), 2) }}€
+          </div>
+        </div>
+
+        <!-- Action Button -->
+        <button 
+          class="simulate-button"
+          [class.buy]="operationType === 'buy'"
+          [class.sell]="operationType === 'sell'"
+          [disabled]="operationType === 'buy' && !hasEnoughCash()"
+          (click)="simulateOperation()">
+          {{ operationType === 'buy' ? 'SIMULAR COMPRA' : 'SIMULAR VENTA' }}
+        </button>
+
+        <p class="disclaimer">
+          * Las operaciones se guardan en tu cartera de Burtsa
+        </p>
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- GRÁFICA DE PRECIO HISTÓRICO -->
+    <!-- ============================================ -->
+    <div class="price-history-section" *ngIf="priceHistory.length > 0">
+      <app-price-chart
+        [data]="priceHistory"
+        [title]="'Evolución de ' + (stock.name || symbol)"
+        [symbol]="symbol">
+      </app-price-chart>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ANÁLISIS TÉCNICO -->
+    <!-- ============================================ -->
+    <div class="technical-analysis-section" *ngIf="stock">
+      <h2 class="section-title">📊 Análisis Técnico</h2>
+      
+      <!-- Loading indicators -->
+      <div class="loading-indicators" *ngIf="loadingIndicators">
+        <div class="spinner"></div>
+        <p>Calculando indicadores técnicos...</p>
+      </div>
+      
+      <!-- Componente de indicadores -->
+      <app-technical-indicators 
+        *ngIf="!loadingIndicators && historicalPrices.length > 0"
+        [priceHistory]="historicalPrices"
+        [currentPrice]="stock.price">
+      </app-technical-indicators>
+      
+      <!-- Sin datos -->
+      <div class="no-indicators" *ngIf="!loadingIndicators && historicalPrices.length === 0">
+        <div class="no-data-icon">📊</div>
+        <p>No hay datos históricos disponibles para calcular indicadores</p>
+        <small>Se necesitan al menos 50 días de datos</small>
+      </div>
+    </div>
+
+
+    <!-- Company Profile -->
+    <div class="company-section">
+      <button class="company-button" (click)="goToCompanyWebsite()">
+        🔗 Ver Perfil de Empresa
+      </button>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="!loading && !stock">
+    <h2>⚠️ Valor no encontrado</h2>
+    <p>No se pudo cargar la información de este valor.</p>
+    <button class="back-button-large" (click)="goBack()">
+      Volver al listado
+    </button>
+  </div>
+</div>

@@ -1,0 +1,508 @@
+.market-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+// Header
+.header {
+  background-color: #fff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2c7a7b;
+  margin: 0;
+}
+
+.navigation {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-button {
+  padding: 8px 20px;
+  background-color: transparent;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f5f5f5;
+    border-color: #2c7a7b;
+    color: #2c7a7b;
+  }
+
+  &.active {
+    background-color: #2c7a7b;
+    border-color: #2c7a7b;
+    color: white;
+  }
+
+  &.portfolio-nav {
+    background: linear-gradient(135deg, #2c7a7b 0%, #14b8a6 100%);
+    border-color: #2c7a7b;
+    color: white;
+    box-shadow: 0 2px 8px rgba(44, 122, 123, 0.2);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(44, 122, 123, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Contenedor externo del banner
+.update-time-container {
+  background-color: #f8f9fa;
+  padding: 0 20px;
+}
+
+// Banner de hora - color verde del contenedor
+.update-time-banner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #2c7a7b;
+  
+  .update-icon {
+    font-size: 14px;
+  }
+  
+  .update-text {
+    font-weight: 500;
+    
+    strong {
+      font-weight: 700;
+      font-size: 14px;
+    }
+  }
+}
+
+// Index Summary
+.index-summary {
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.index-card {
+  background: linear-gradient(135deg, #2c7a7b 0%, #38b2ac 100%);
+  border-radius: 12px;
+  padding: 30px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(44, 122, 123, 0.2);
+}
+
+.index-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.index-name {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.index-status {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.index-value {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.value-number {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.change-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+
+  &.positive {
+    .change-icon {
+      color: #4ade80;
+    }
+  }
+
+  &.negative {
+    .change-icon {
+      color: #f87171;
+    }
+  }
+}
+
+.change-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.change-percent {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.change-label {
+  opacity: 0.8;
+  font-size: 12px;
+}
+
+.change-value {
+  font-weight: 600;
+}
+
+// Movers Section
+.movers-section {
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.movers-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.movers-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+  color: #333;
+}
+
+.movers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mover-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.mover-name {
+  font-size: 14px;
+  color: #0d9488;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    color: #0f766e;
+  }
+}
+
+.mover-change {
+  font-size: 14px;
+  font-weight: 700;
+
+  &.positive {
+    color: #16a34a;
+  }
+
+  &.negative {
+    color: #dc2626;
+  }
+}
+
+// Table Container
+.table-container {
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 0 20px;
+  background-color: transparent;
+  position: relative;
+  overflow-x: auto;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 8px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2c7a7b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Tabla
+.stocks-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+
+  thead {
+    background-color: #f3f4f6;
+    
+    tr:first-child {
+      th:first-child {
+        border-top-left-radius: 8px;
+      }
+      th:last-child {
+        border-top-right-radius: 8px;
+      }
+    }
+  }
+
+  th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    color: #1f2937;
+    border-bottom: 2px solid #9ca3af;
+    border-right: 1px solid #d1d5db;
+    white-space: nowrap;
+    font-size: 13px;
+    background-color: #f3f4f6;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &.text-right {
+      text-align: right;
+    }
+  }
+
+  th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    position: relative;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    &.sorted {
+      background-color: rgba(44, 122, 123, 0.1);
+      font-weight: 700;
+    }
+    
+    .sort-icon {
+      display: inline-block;
+      margin-left: 4px;
+      font-size: 10px;
+      color: #2c7a7b;
+      min-width: 10px;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f9fafb;
+    }
+
+    &:last-child {
+      border-bottom: none;
+      
+      td:first-child {
+        border-bottom-left-radius: 8px;
+      }
+      td:last-child {
+        border-bottom-right-radius: 8px;
+      }
+    }
+
+    &.index-row {
+      background-color: #dbeafe;
+      font-weight: 600;
+      border-bottom: 2px solid #2c7a7b;
+
+      &:hover {
+        background-color: #bfdbfe;
+      }
+
+      .index-name {
+        color: #0369a1;
+        font-weight: 700;
+      }
+    }
+  }
+
+  td {
+    padding: 12px 16px;
+    color: #374151;
+    border-right: 1px solid #f3f4f6;
+    
+    &:last-child {
+      border-right: none;
+    }
+
+    &.text-right {
+      text-align: right;
+    }
+
+    &.stock-name {
+      font-weight: 600;
+      color: #0d9488;
+      cursor: pointer;
+      border-right: 1px solid #e5e7eb;
+
+      &:hover {
+        text-decoration: underline;
+        color: #0f766e;
+      }
+    }
+
+    &.positive {
+      color: #059669;
+      font-weight: 600;
+    }
+
+    &.negative {
+      color: #dc2626;
+      font-weight: 600;
+    }
+  }
+}
+
+.no-data {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+  font-size: 16px;
+  background-color: white;
+  border-radius: 8px;
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    height: auto;
+    padding: 15px 20px;
+    gap: 15px;
+  }
+
+  .navigation {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-button {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  th.sortable {
+    .sort-icon {
+      display: none;
+    }
+  }
+
+  .movers-section {
+    grid-template-columns: 1fr;
+    padding: 0 10px;
+  }
+
+  .table-container {
+    padding: 0 10px;
+  }
+
+  .stocks-table {
+    font-size: 12px;
+
+    th, td {
+      padding: 8px 12px;
+    }
+  }
+
+  .index-card {
+    padding: 20px;
+  }
+
+  .value-number {
+    font-size: 28px;
+  }
+
+  .change-badge {
+    flex-wrap: wrap;
+    gap: 5px;
+    font-size: 12px;
+  }
+}

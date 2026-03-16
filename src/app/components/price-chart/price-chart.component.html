@@ -1,0 +1,57 @@
+<div class="price-chart-container">
+  <!-- Header con título y controles de período -->
+  <div class="chart-header">
+    <h3 class="chart-title">{{ title }}</h3>
+    <div class="period-selector">
+      <button 
+        *ngFor="let period of periods"
+        [class.active]="selectedPeriod === period.value"
+        (click)="changePeriod(period.value)"
+        class="period-btn">
+        {{ period.label }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Estadísticas -->
+  <div class="stats-container" *ngIf="stats && !loading && !error">
+    <div class="stat-item">
+      <span class="stat-label">Máximo</span>
+      <span class="stat-value">{{ stats.max | number:'1.2-4' }}€</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Mínimo</span>
+      <span class="stat-value">{{ stats.min | number:'1.2-4' }}€</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Promedio</span>
+      <span class="stat-value">{{ stats.avg | number:'1.2-4' }}€</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Variación</span>
+      <span class="stat-value" [class.positive]="stats.change >= 0" [class.negative]="stats.change < 0">
+        {{ stats.change >= 0 ? '+' : '' }}{{ stats.change | number:'1.2-2' }}%
+      </span>
+    </div>
+  </div>
+
+  <!-- ✅ ESTADO DE CARGA -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Cargando datos históricos...</p>
+  </div>
+
+  <!-- ✅ ESTADO DE ERROR -->
+  <div class="error-state" *ngIf="error && !loading">
+    <div class="error-icon">⚠️</div>
+    <p class="error-message">{{ error }}</p>
+    <button class="retry-btn" (click)="loadHistoricalData()" *ngIf="symbol">
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Canvas del gráfico -->
+  <div class="chart-wrapper" *ngIf="!loading && !error">
+    <canvas #chartCanvas></canvas>
+  </div>
+</div>
